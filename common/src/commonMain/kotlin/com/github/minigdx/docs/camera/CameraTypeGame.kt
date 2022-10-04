@@ -11,25 +11,33 @@ import com.github.dwursteisen.minigdx.ecs.entities.EntityFactory
 import com.github.dwursteisen.minigdx.ecs.events.Event
 import com.github.dwursteisen.minigdx.ecs.systems.EntityQuery
 import com.github.dwursteisen.minigdx.ecs.systems.System
-import com.github.dwursteisen.minigdx.file.Texture
 import com.github.dwursteisen.minigdx.file.get
 import com.github.dwursteisen.minigdx.game.Game
 import com.github.dwursteisen.minigdx.graph.GraphScene
-import com.github.dwursteisen.minigdx.imgui.ImGuiSystem
 import com.github.dwursteisen.minigdx.input.Key
 import com.github.minigdx.docs.quick.start.Cube
-import com.github.minigdx.imgui.WidgetBuilder
+import com.github.minigdx.imgui.ImGui
 
 class ChangeCameraType : Event
 
 class CameraTypeSystem(gameScreen: GameScreen) : System(EntityQuery.of(CameraComponent::class)) {
 
-    override fun update(delta: Seconds, entity: Entity) = Unit
+    override fun update(delta: Seconds, entity: Entity) {
+        with(ImGui) {
+            container("Cameras") {
+                label("Update the type of camera used:")
+                if(button(entity.get(CameraComponent::class).type.toString())) {
+                    emit(ChangeCameraType())
+                }
+            }
+        }
+    }
 
     override fun update(delta: Seconds) {
         if (input.isKeyJustPressed(Key.SPACE)) {
             emit(ChangeCameraType())
         }
+        super.update(delta)
     }
 
     private val perspective = CameraComponent(
@@ -52,9 +60,7 @@ class CameraTypeSystem(gameScreen: GameScreen) : System(EntityQuery.of(CameraCom
     override fun onEvent(event: Event, entityQuery: EntityQuery?) = when (event) {
         is ChangeCameraType -> entities.forEach { entity ->
             val camera = entity.get(CameraComponent::class)
-            val cameraType = camera.type
-
-            when (cameraType) {
+            when (camera.type) {
                 CameraComponent.Type.PERSPECTIVE -> {
                     entity.remove(camera)
                     entity.add(orthographic)
@@ -66,21 +72,6 @@ class CameraTypeSystem(gameScreen: GameScreen) : System(EntityQuery.of(CameraCom
             }
         }
         else -> Unit
-    }
-}
-
-class CameraGUI : ImGuiSystem() {
-
-    private val cameras by interested(EntityQuery.Companion.of(CameraComponent::class))
-
-    override fun gui(builder: WidgetBuilder<Texture>) {
-        builder.verticalContainer(width = 0.5f) {
-            cameras.forEach {
-                button(label = it.get(CameraComponent::class).type.toString()) {
-                    emit(ChangeCameraType())
-                }
-            }
-        }
     }
 }
 
@@ -100,7 +91,7 @@ class CameraTypeGame(override val gameContext: GameContext) : Game {
     }
 
     override fun createSystems(engine: Engine): List<System> {
-        return listOf(CameraTypeSystem(gameContext.gameScreen), CameraGUI())
+        return listOf(CameraTypeSystem(gameContext.gameScreen))
     }
 }
 // end::loading[]

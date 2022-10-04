@@ -20,6 +20,13 @@ pluginManagement {
             includeVersionByRegex("com.github.minigdx", "(.*)", "LATEST-SNAPSHOT")
         }
         mavenLocal()
-        jcenter()
     }
 }
+
+plugins {
+    id("com.github.minigdx.settings") version ("LATEST-SNAPSHOT")
+}
+
+include("common")
+include("jvm")
+include("web")

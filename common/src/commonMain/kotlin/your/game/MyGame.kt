@@ -1,6 +1,5 @@
 package your.game
 
-import com.dwursteisen.minigdx.scene.api.Scene
 import com.dwursteisen.minigdx.scene.api.relation.ObjectType
 import com.github.dwursteisen.minigdx.GameContext
 import com.github.dwursteisen.minigdx.ecs.Engine

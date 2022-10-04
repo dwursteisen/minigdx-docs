@@ -1,24 +1,25 @@
 plugins {
-    id("com.github.minigdx.jvm") version "LATEST-SNAPSHOT"
-    id("com.github.minigdx.js") version "LATEST-SNAPSHOT"
-    id("com.github.minigdx.common") version "LATEST-SNAPSHOT"
-
-    id("org.asciidoctor.jvm.convert") version "3.1.0"
-}
-
-minigdx {
-    jvm.mainClass.set("com.github.minigdx.docs.quick.start.Main")
-    this.version.set("LATEST-SNAPSHOT")
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
 val copyJs = project.tasks.register("unzipBundleJs", Copy::class) {
-    this.dependsOn("bundle-js")
-    this.from(project.zipTree("build/minigdx/minigdx-docs.zip"))
+    this.dependsOn(":web:bundleJs")
+    this.from(project.zipTree("web/build/minigdx/web.zip"))
     this.into("build/docs/asciidoc/")
 
 }
 project.tasks.getByName("asciidoctor").dependsOn(copyJs)
 project.tasks.getByName("asciidoctor", org.asciidoctor.gradle.jvm.AsciidoctorTask::class) {
     this.baseDirFollowsSourceDir()
+}
 
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    }.mavenContent {
+        includeVersionByRegex("com.github.minigdx.(.*)", "(.*)", "LATEST-SNAPSHOT")
+        includeVersionByRegex("com.github.minigdx", "(.*)", "LATEST-SNAPSHOT")
+    }
+    mavenLocal()
 }

@@ -3,7 +3,7 @@
 :toc: left
 :toclevels: 5
 :icons: font
-:sourcedir: ../../commonMain/kotlin
+:sourcedir: ../../../common/src/commonMain/kotlin
 
 = MiniGDX Guide Book
 
@@ -161,8 +161,8 @@ TIP: Share to the world your creation on twitter with the https://twitter.com/se
 
 === Deploy a Desktop Game
 
-`./gradle bundle-jar`
+`./gradle bundleJar`
 
 === Deploy a Web Game
 
-`./gradle bundle-js`
+`./gradle bundleJs`

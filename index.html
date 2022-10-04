@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>MiniGDX Guide Book</title>
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+
+@import url(//fonts.googleapis.com/css?family=Montserrat|Open+Sans);
+@import url(https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css); /* Default asciidoc style framework - important */
+
+/* CUSTOMISATIONS */
+/* Change the values in root for quick customisation. If you want even more fine grain... venture further. */
+:root {
+    --maincolor: #FFFFFF;
+    --primarycolor: #294172; /* Fedora Dark Blue */
+    --secondarycolor: #3c6eb4; /* Fedora Blue */
+    --tertiarycolor: #CCCCCC;
+    --highlightcolor: #e59728; /* Features Orange */
+    --sidebarbackground: #CACACA;
+    --linkcolor: #0D47A1;
+    --linkcoloralternate: #db3279; /* Friends Magneta */
+    --white: #FFFFFF;
+    --black: #000000;
+}
+
+/* Text styles */
+
+body {
+    font-family: "Open Sans", sans-serif;
+    background-color: var(--maincolor);
+    color: var(--black);
+}
+
+h1 {
+    color: var(--primarycolor) !important;
+    font-family: "Montserrat", sans-serif;
+}
+
+h2, h3, h4, h5, h6 {
+    color: var(--secondarycolor) !important;
+    font-family: "Montserrat", sans-serif;
+}
+
+.title {
+    color: var(--black) !important;
+    font-family: "Open Sans", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+}
+
+a {
+    text-decoration: none;
+}
+
+p {
+    font-family: "Open Sans", sans-serif ! important
+}
+
+#toc.toc2 a:link {
+    color: var(--linkcolor);
+}
+
+blockquote {
+    color: var(--linkcoloralternate) !important
+}
+
+.quoteblock blockquote:before {
+    color: var(--linkcoloralternate)
+}
+
+code {
+    color: var(--white);
+    background-color: var(--highlightcolor) !important
+}
+
+mark {
+    background-color: var(--highlightcolor)
+}
+
+/* Text highlighting color */
+
+/* Table styles */
+th {
+    background-color: var(--maincolor);
+    color: var(--black) !important;
+}
+
+td {
+    background-color: var(--maincolor);
+    color: var(--black) !important
+}
+
+
+#toc.toc2 {
+    background-color: var(--sidebarbackground);
+}
+
+#toctitle {
+    color: var(--white);
+}
+
+/* Responsiveness fixes */
+video {
+    max-width: 100%;
+}
+
+@media all and (max-width: 600px) {
+    table {
+        width: 55vw !important;
+        font-size: 3vw;
+    }
+}
+
+
+/* MINIGDX Custom Css */
+.canvas-container {
+    width: 100%;
+    text-align:center;
+}
+
+canvas {
+    border:1px solid #000000;
+}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>MiniGDX Guide Book</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_overview">Overview</a></li>
+<li><a href="#_quick_start">Quick Start</a></li>
+<li><a href="#_game_creation_workflow">Game Creation Workflow</a>
+<ul class="sectlevel2">
+<li><a href="#_3d_model_creation">3D model creation</a></li>
+<li><a href="#_use_the_3d_model">Use the 3D model</a></li>
+<li><a href="#_create_game_systems">Create game systems</a></li>
+</ul>
+</li>
+<li><a href="#_scene_creation">Scene Creation</a></li>
+<li><a href="#_minigdx_api">MiniGDX API</a>
+<ul class="sectlevel2">
+<li><a href="#_systems">Systems</a>
+<ul class="sectlevel3">
+<li><a href="#_entity_graph">Entity graph</a></li>
+<li><a href="#_default_systems_and_components">Default systems and components</a></li>
+</ul>
+</li>
+<li><a href="#_position">Position</a></li>
+<li><a href="#_camera">Camera</a></li>
+<li><a href="#_rigged_model_animations">Rigged Model Animations</a></li>
+</ul>
+</li>
+<li><a href="#_how_to">How to</a>
+<ul class="sectlevel2">
+<li><a href="#_create_a_2d_game">Create a 2D game</a></li>
+</ul>
+</li>
+<li><a href="#_deployment">Deployment</a>
+<ul class="sectlevel2">
+<li><a href="#_deploy_a_desktop_game">Deploy a Desktop Game</a></li>
+<li><a href="#_deploy_a_web_game">Deploy a Web Game</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="literalblock">
+<div class="content">
+<pre>███╗   ███╗██╗███╗   ██╗██╗ ██████╗ ██████╗ ██╗  ██╗
+████╗ ████║██║████╗  ██║██║██╔════╝ ██╔══██╗╚██╗██╔╝
+██╔████╔██║██║██╔██╗ ██║██║██║  ███╗██║  ██║ ╚███╔╝
+██║╚██╔╝██║██║██║╚██╗██║██║██║   ██║██║  ██║ ██╔██╗
+██║ ╚═╝ ██║██║██║ ╚████║██║╚██████╔╝██████╔╝██╔╝ ██╗
+╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>MiniGDX is a minimalist 3D Game engine based on Kotlin/Multiplatform.
+A game can be created in Kotlin and deployed in a browser, on a desktop or on Android.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_overview">Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before creating your first game, check <a href="https://github.com/minigdx/minigdx-showcase">the showcase web site</a> and the <a href="https://github.com/minigdx/minigdx">MiniGDX code repository</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You found a typo? a sentence is not clear?
+<a href="https://github.com/minigdx/minigdx-docs/edit/master/src/docs/asciidoc/index.adoc">You can edit this documentation</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_start">Quick Start</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Open <a href="https://github.com/minigdx/minigdx-game-template">MiniGDX Template Repository</a></p>
+</li>
+<li>
+<p>Hit the button "Use This Template"</p>
+</li>
+<li>
+<p>Clone your new project locally</p>
+</li>
+<li>
+<p>Run the command <code>./gradlew runJvm</code> (to run on desktop) or <code>./gradlew runJs</code> (to run in your browser)</p>
+</li>
+<li>
+<p>This example bellow should be displayed</p>
+</li>
+</ul>
+</div>
+<div class="canvas-container">
+    <canvas width="512" height="288" property="quickstart"></canvas>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s take a look to the game&#8217;s code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-kotlin" data-lang="kotlin">class CubeGame(override val gameContext: GameContext) : Game {
+
+    private val scene by gameContext.fileHandler.get&lt;GraphScene&gt;("cube.protobuf") <i class="conum" data-value="1"></i><b>(1)</b>
+
+    override fun createEntities(entityFactory: EntityFactory) {
+        // Create all entities needed at startup
+        // The scene is the node graph that can be updated in Blender
+        scene.nodes.forEach { node -&gt;
+            // Create an entity using all information from this node (model, position, camera, ...)
+            <i class="conum" data-value="2"></i><b>(2)</b>
+            val entity = entityFactory.createFromNode(node)
+
+            // The node is the cube from the Blender file
+            if (node.type == ObjectType.MODEL) {
+                // Mark this entity as being a cube
+                entity.add(Cube())
+            }
+        }
+    }
+
+    override fun createSystems(engine: Engine): List&lt;System&gt; {
+        // Create all systems used by the game
+        <i class="conum" data-value="3"></i><b>(3)</b>
+        return listOf(RotatingCubeSystem())
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load the scene of the game;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Create an entity from a object of the scene;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Create a system.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The source code of this quick start can be <a href="https://github.com/minigdx/minigdx-game-template/tree/main/src/commonMain/kotlin/your/game">browsed online</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>MiniGDX is an <a href="https://gameprogrammingpatterns.com/component.html">entity component</a> based game engine.
+Those entities are created, in this example, from objects of the scene.
+The scene is loaded from a <code>protobuf</code> file.
+This file is created using a gradle plugin using a <code>gltf</code> as source.
+More information about this process are available in the <a href="#_scene_creation">Scene Creation</a> paragraph.</p>
+</div>
+<div class="paragraph">
+<p>Just keep in mind: this example load models from a file containing all 3D models.
+Then it create all entities from this file: the camera, the light and the cube.
+The component <code>Cube</code> is added only to this 3D model.
+See this component as a "tag" so the <code>RotatingCubeSystem</code> do know which entities to manipulate.</p>
+</div>
+<div class="paragraph">
+<p>Once all entities of the game are creating, the <code>RotatingCubeSystem</code> will manage the behaviours of all entities with the component <code>Cube</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-kotlin" data-lang="kotlin">/**
+ * Rotate entities with [Cube] component by 90 degrees per second.
+ */
+class
+RotatingCubeSystem : System(EntityQuery.of(Cube::class)) {
+
+    override fun update(delta: Seconds, entity: Entity) {
+        val component = entity.get(Cube::class)
+        // If the key SPACE is pressed one time,
+        // then set the duration of the component to 2 seconds.
+        if(input.isKeyJustPressed(Key.SPACE)) { <i class="conum" data-value="1"></i><b>(1)</b>
+            component.duration = 2f
+        }
+
+        // If there is a duration, the cube can be scaled
+        if(component.duration &gt; 0f) { <i class="conum" data-value="2"></i><b>(2)</b>
+            component.duration -= delta
+            // Compute the scale regarding the remaining duration using a cosine function
+            // and keep the absolute value so the scale is always positive.
+            val scale = abs(cos(component.duration))
+
+            // Set the scale of the cube.
+            entity.position.setLocalScale(
+                x = scale,
+                y = scale,
+                z = scale
+            )
+        }
+
+        // Rotate the cube of 90 degrees per second.
+        entity.position.addLocalRotation(y = 90f, delta = delta) <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>React to the user input.
+If the space bar has been pressed, then start a timer;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the timer is started, then alter the scale of the current entity (here, the cube);</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Rotate the cube in all cases.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Tweak the cube animation by changing the speed of the rotation then restart the game using <code>./gradlew runJvm</code>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_game_creation_workflow">Game Creation Workflow</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_3d_model_creation">3D model creation</h3>
+<div class="paragraph">
+<p>MiniGDX can load 3D model from GLTF files. But not all 3D model nor all features from GLTF are supported.
+To use your model, the model needs to have a texture attached.</p>
+</div>
+<div class="paragraph">
+<p>Only emissive Texture or  BSDF Texture are supported for the moment.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You don&#8217;t want to use texture but only color? Create or download a texture on <a href="https://lospec.com/palette-listg">lospec</a>. This texture will act like a palette: use a pixel as color for one face for example.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Safari doesn&#8217;t support WebGL 2 for the moment. If your game needs to run under safari, you have to create
+a texture with a pow2 size. This issue should be fixed with Safari 15. <a href="https://github.com/minigdx/minigdx/issues/15">More information on the related issue</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To be loaded in MiniGDX, the GLTF file needs to be converted in a protobuf file that can be read by MiniGDX.
+This conversion is performed at the build time by gradle using a plugin. By default, all <code>gltf</code> files
+in the <code>src/commonMain/assetsSource</code> are converted as protobuf files.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_use_the_3d_model">Use the 3D model</h3>
+<div class="paragraph">
+<p>The <code>FileHandler</code> is responsible to load resources. When loaded at the creation of the game (1),
+the resource will be fully loaded when the game will be started (2)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-kotlin" data-lang="kotlin">class CameraTypeGame(override val gameContext: GameContext) : Game {
+
+    private val scene by gameContext.fileHandler.get&lt;GraphScene&gt;("cube.protobuf") <i class="conum" data-value="1"></i><b>(1)</b>
+
+    override fun createEntities(entityFactory: EntityFactory) { <i class="conum" data-value="2"></i><b>(2)</b>
+        scene.nodes.forEach { node -&gt;
+            val entity = entityFactory.createFromNode(node)
+
+            if (node.type == ObjectType.MODEL) {
+                entity.add(Cube())
+            }
+        }
+    }
+
+    override fun createSystems(engine: Engine): List&lt;System&gt; {
+        return listOf(CameraTypeSystem(gameContext.gameScreen))
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_game_systems">Create game systems</h3>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scene_creation">Scene Creation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_minigdx_api">MiniGDX API</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_systems">Systems</h3>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+<div class="sect3">
+<h4 id="_entity_graph">Entity graph</h4>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_default_systems_and_components">Default systems and components</h4>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_position">Position</h3>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_camera">Camera</h3>
+<div class="paragraph">
+<p>MiniGDX provide two camera type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Perspective: Project objects on the scream like a camera would do: An object close to the camera will be tall while the same object far in the background look small.</p>
+</li>
+<li>
+<p>Orthographic: The object will lock the same no mater if it&#8217;s close or not of the camera. Ideal for a 2D game</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can switch between the two in the example bellow.</p>
+</div>
+<div class="canvas-container">
+    <canvas width="512" height="288" property="camera"></canvas>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rigged_model_animations">Rigged Model Animations</h3>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_to">How to</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create_a_2d_game">Create a 2D game</h3>
+<div class="paragraph">
+<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry&#8217;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deployment">Deployment</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Share to the world your creation on twitter with the <a href="https://twitter.com/search?q=minigdx">hashtag #minigdx</a>!
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_deploy_a_desktop_game">Deploy a Desktop Game</h3>
+<div class="paragraph">
+<p><code>./gradle bundleJar</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_a_web_game">Deploy a Web Game</h3>
+<div class="paragraph">
+<p><code>./gradle bundleJs</code></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-10-04 22:11:31 UTC
+</div>
+</div>
+<script src="web.js"></script>
+</body>
+</html>
